@@ -5,13 +5,17 @@ class StoryJumper {
     this.story = sampleText.split(/ |\n\n/);
   }
 
+  _strip(word) {
+    return word.replace(/\,|\.|\’|\”|\“/, "");
+  }
+
   _placesOf(word) {
     const wordIndices = this.story.reduce((is, w, i) => {
       // Splitting leaves commas, period, smart apostrophes, and smart quotes
       // intact. To compare to the search term `word`, first strip comparing
       // story word and lower case each.
       const wordIndicesAccumulator =
-        w.replace(/\,|\.|\’|\”|\“/, "").toLowerCase() === word.toLowerCase()
+        this._strip(w).toLowerCase() === word.toLowerCase()
           ? is.concat([i])
           : is;
       return wordIndicesAccumulator;
@@ -39,7 +43,8 @@ class StoryJumper {
         this._placesOf(this.story[place]).length > 2 &&
         Math.random() > jumpProbability
       ) {
-        let otherWordPlaces = this._placesOf(this.story[place]).filter(
+        let currentWord = this._strip(this.story[place]);
+        let otherWordPlaces = this._placesOf(currentWord).filter(
           p => p !== place
         );
 
